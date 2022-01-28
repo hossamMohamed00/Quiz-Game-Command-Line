@@ -11,36 +11,45 @@ import chalkAnimation from "chalk-animation";
 import figlet from "figlet";
 import { createSpinner } from "nanospinner";
 
-let playerName; //? Hold the player name
-const categories = [
-  {
-    id: "9",
-    category: "General Knowledge",
-  },
-  {
-    id: "11",
-    category: "Film",
-  },
-  {
-    id: "21",
-    category: "Sports",
-  },
-  {
-    id: "15",
-    category: "Games",
-  },
-  {
-    id: "18",
-    category: "Computer Science",
-  },
-  {
-    id: "23",
-    category: "History",
-  },
-];
-let selectedLevel;
-let selectedCategoryId;
-let questionsList = []; //? Hold all questions loaded
+const gameData = {
+  //? Hold the player name
+  playerName: "",
+  //? All available categories
+  categories: [
+    {
+      id: "9",
+      category: "General Knowledge",
+    },
+    {
+      id: "11",
+      category: "Film",
+    },
+    {
+      id: "21",
+      category: "Sports",
+    },
+    {
+      id: "15",
+      category: "Games",
+    },
+    {
+      id: "18",
+      category: "Computer Science",
+    },
+    {
+      id: "23",
+      category: "History",
+    },
+  ],
+  //? Hold question's category
+  selectedCategoryId: "",
+  //? Hold game level
+  selectedLevel: "Easy",
+  //? Hold question's amount
+  amountOfQuestions: 5,
+  //? Hold all questions loaded
+  questionsList: [],
+};
 
 /**
  * @purpose - Sleep for  a specified amount of time
@@ -75,11 +84,13 @@ async function askName() {
     },
   });
 
-  playerName = answer.player_name;
+  gameData.playerName = answer.player_name;
 }
 
 async function chooseCategory() {
-  const availableCategories = categories.map((entry) => entry.category);
+  const availableCategories = gameData.categories.map(
+    (entry) => entry.category
+  );
   //? Prompt player with categories
   const playerAnswer = await promptPlayer(
     "category",
@@ -88,23 +99,21 @@ async function chooseCategory() {
   );
 
   //? Get the selected category id
-  categories.forEach((entry) => {
+  gameData.categories.forEach((entry) => {
     if (entry.category == playerAnswer) {
-      selectedCategoryId = entry.id;
+      gameData.selectedCategoryId = entry.id;
     }
   });
-  console.log(selectedCategoryId);
 }
 
 /**
  * @purpose - Load questions from the third party API and save them in the questions list.
- * @param {number} count - Question's count (Default = 2)
  */
-async function loadQuestions(count = 3) {
+async function loadQuestions() {
   try {
     //? Send GET request to opentdb.com to get a list of questions.
     const response = await axios.get(
-      `https://opentdb.com/api.php?amount=${count}&category=${selectedCategoryId}&difficulty=easy&type=multiple`
+      `https://opentdb.com/api.php?amount=${gameData.amountOfQuestions}&category=${gameData.selectedCategoryId}&difficulty=easy&type=multiple`
     );
 
     //? Check if the response is successful
@@ -118,7 +127,7 @@ async function loadQuestions(count = 3) {
         );
 
         //? Push the question in the list
-        questionsList.push({
+        gameData.questionsList.push({
           //* The question text
           question: entry.question,
           //* All available answers
@@ -127,14 +136,14 @@ async function loadQuestions(count = 3) {
           answerText: entry.correct_answer,
         });
       });
-
-      console.log(questionsList);
     } else {
       throw new Error();
     }
   } catch (error) {
     console.log(
-      chalk.red(`Sorry ${playerName}, no questions available right now!`)
+      chalk.red(
+        `Sorry ${gameData.playerName}, no questions available right now!`
+      )
     );
     console.log(chalk.blueBright("Please come back soon."));
 
@@ -161,9 +170,9 @@ function prepareAnswers(incorrectAnswers, correctAnswer) {
  */
 async function play() {
   //? Ensure that there is available questions
-  if (questionsList) {
-    for (let counter = 0; counter < questionsList.length; counter++) {
-      const entry = questionsList[counter];
+  if (gameData.questionsList) {
+    for (let counter = 0; counter < gameData.questionsList.length; counter++) {
+      const entry = gameData.questionsList[counter];
 
       console.log("Answer: ", chalk.red(entry.answerText));
 
@@ -188,7 +197,9 @@ async function play() {
     return true;
   } else {
     console.log(
-      chalk.bgRed(`Sorry ${playerName}, no questions available right now.`)
+      chalk.bgRed(
+        `Sorry ${gameData.playerName}, no questions available right now.`
+      )
     );
     return process.exit(1);
   }
@@ -222,11 +233,11 @@ async function handleAnswer(playerAnswer, questionAnswer) {
   const spinner = createSpinner("Checking answer...").start();
   await sleep();
   if (playerAnswer == questionAnswer) {
-    spinner.success({ text: `Nice work ${playerName}.` });
+    spinner.success({ text: `Nice work ${gameData.playerName}.` });
     //? Indicate that the player answer is correct. 👌🏻
     return true;
   } else {
-    spinner.error({ text: `Game Over, you lose ${playerName}!` });
+    spinner.error({ text: `Game Over, you lose ${gameData.playerName}!` });
     //? Indicate that the player answer is Incorrect. ❌❌
     return false;
   }
@@ -238,7 +249,7 @@ async function handleAnswer(playerAnswer, questionAnswer) {
 function winner() {
   console.clear();
   const msg =
-    `Congrats, ${playerName} !\n $ 1, 0 0 0 , 0 0 0 for you`.toUpperCase();
+    `Congrats, ${gameData.playerName} !\n $ 1, 0 0 0 , 0 0 0 for you`.toUpperCase();
 
   figlet(msg, (err, data) => {
     if (!err) {
@@ -258,7 +269,7 @@ function winner() {
  */
 function loser() {
   console.clear();
-  const msg = `oops, ${playerName} !\n you are loser`.toUpperCase();
+  const msg = `oops, ${gameData.playerName} !\n you are loser`.toUpperCase();
 
   figlet(msg, (err, data) => {
     if (!err) {
