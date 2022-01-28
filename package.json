@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "keywords": [
     "Nodejs",
@@ -16,6 +16,14 @@
   "author": "Hossam Mohamed",
   "license": "ISC",
   "bin": "./index.js",
+  "engines": {
+    "node": ">=0.12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hossamMohamed00/Quiz-Game-Command-Line.git"
+  },
+  "homepage": "https://github.com/hossamMohamed00/Quiz-Game-Command-Line.git",
   "dependencies": {
     "axios": "^0.25.0",
     "chalk": "^5.0.0",
