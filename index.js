@@ -11,8 +11,36 @@ import chalkAnimation from "chalk-animation";
 import figlet from "figlet";
 import { createSpinner } from "nanospinner";
 
-let playerName;
-let questionsList = [];
+let playerName; //? Hold the player name
+const categories = [
+  {
+    id: "9",
+    category: "General Knowledge",
+  },
+  {
+    id: "11",
+    category: "Film",
+  },
+  {
+    id: "21",
+    category: "Sports",
+  },
+  {
+    id: "15",
+    category: "Games",
+  },
+  {
+    id: "18",
+    category: "Computer Science",
+  },
+  {
+    id: "23",
+    category: "History",
+  },
+];
+let selectedLevel;
+let selectedCategoryId;
+let questionsList = []; //? Hold all questions loaded
 
 /**
  * @purpose - Sleep for  a specified amount of time
@@ -50,17 +78,33 @@ async function askName() {
   playerName = answer.player_name;
 }
 
+async function chooseCategory() {
+  const availableCategories = categories.map((entry) => entry.category);
+  //? Prompt player with categories
+  const playerAnswer = await promptPlayer(
+    "category",
+    "Choose a category?",
+    availableCategories
+  );
+
+  //? Get the selected category id
+  categories.forEach((entry) => {
+    if (entry.category == playerAnswer) {
+      selectedCategoryId = entry.id;
+    }
+  });
+  console.log(selectedCategoryId);
+}
+
 /**
  * @purpose - Load questions from the third party API and save them in the questions list.
  * @param {number} count - Question's count (Default = 2)
  */
 async function loadQuestions(count = 3) {
-  //* API token
-  const token = process.env.QUIZ_APP_TOKEN;
   try {
-    //? Send GET request to quizapi.io to get a list of questions.
+    //? Send GET request to opentdb.com to get a list of questions.
     const response = await axios.get(
-      `https://opentdb.com/api.php?amount=${count}&category=18&difficulty=easy&type=multiple`
+      `https://opentdb.com/api.php?amount=${count}&category=${selectedCategoryId}&difficulty=easy&type=multiple`
     );
 
     //? Check if the response is successful
@@ -223,10 +267,13 @@ function loser() {
   });
 }
 
-//* Run the Game
+/**
+ * ? Run the Game
+ */
 async function runGame() {
   await welcome(); //? Greeting message
   await askName(); //? Ask for the player name
+  await chooseCategory();
   await loadQuestions(); //? Load questions from the API
 
   const win = await play(); //? Start the game
