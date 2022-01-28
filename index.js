@@ -47,8 +47,10 @@ const gameData = {
   difficulties: ["Easy", "Medium", "Hard"],
   //? Hold game difficulty selected by the player
   selectedDifficulty: "",
+  //? All available amount of questions
+  amountOfQuestions: [3, 5, 7, 10],
   //? Hold question's amount
-  amountOfQuestions: 5,
+  selectedAmountOfQuestions: 3,
   //? Hold all questions loaded
   questionsList: [],
 };
@@ -130,14 +132,28 @@ async function chooseDifficulty() {
 }
 
 /**
+ * @purpose - Ask the player to choose question's amount
+ */
+async function chooseAmountOfQuestions() {
+  //? Prompt player with difficulties
+  const playerAnswer = await promptPlayer(
+    "amountOfQuestions",
+    "How many questions do you want to take?",
+    gameData.amountOfQuestions
+  );
+
+  //? Set the selected difficulty
+  gameData.selectedAmountOfQuestions = playerAnswer;
+}
+
+/**
  * @purpose - Load questions from the third party API and save them in the questions list.
  */
-async function loadQuestions() {
+async function fetchQuestions() {
   try {
     //? Send GET request to opentdb.com to get a list of questions.
-    const response = await axios.get(
-      `https://opentdb.com/api.php?amount=${gameData.amountOfQuestions}&category=${gameData.selectedCategoryId}&difficulty=${gameData.selectedDifficulty}&type=multiple`
-    );
+    const url = `https://opentdb.com/api.php?amount=${gameData.selectedAmountOfQuestions}&category=${gameData.selectedCategoryId}&difficulty=${gameData.selectedDifficulty}&type=multiple`;
+    const response = await axios.get(url);
 
     //? Check if the response is successful
     if (response.data.response_code === 0) {
@@ -309,7 +325,8 @@ async function runGame() {
   await askName(); //? Ask for the player name
   await chooseCategory(); //? Ask for the category
   await chooseDifficulty(); //? Ask for the difficulty
-  await loadQuestions(); //? Load questions from the API
+  await chooseAmountOfQuestions(); //? Ask for the amount of questions
+  await fetchQuestions(); //? Load questions from the API
 
   const win = await play(); //? Start the game
 
