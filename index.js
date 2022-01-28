@@ -1,4 +1,3 @@
-#!/user/bin/env node
 /*
 ?Shebang or Hashbang (#!) is the first line of the file
  which tells the OS which interpreter to use.
