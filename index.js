@@ -3,8 +3,6 @@
 ?Shebang or Hashbang (#!) is the first line of the file
  which tells the OS which interpreter to use.
 */
-import dotenv from "dotenv";
-dotenv.config();
 import axios from "axios";
 import chalk from "chalk";
 import inquirer from "inquirer";
@@ -15,12 +13,18 @@ import { createSpinner } from "nanospinner";
 
 let playerName;
 let questionsList = [];
+
+/**
+ * @purpose - Sleep for  a specified amount of time
+ * @param {*} ms - The value to sleep in  milliseconds
+ */
 const sleep = (ms = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * ? Display animated welcome message to the player
+ */
 async function welcome() {
-  const rainbowTitle = chalkAnimation.rainbow(
-    "Who Want To Be A JavaScript Millionaire?"
-  );
+  const rainbowTitle = chalkAnimation.rainbow("Who Want To Be A Millionaire?");
 
   await sleep();
   rainbowTitle.stop();
@@ -50,32 +54,40 @@ async function askName() {
  * @purpose - Load questions from the third party API and save them in the questions list.
  * @param {number} count - Question's count (Default = 2)
  */
-async function loadQuestions(count = 2) {
+async function loadQuestions(count = 3) {
   //* API token
   const token = process.env.QUIZ_APP_TOKEN;
   try {
     //? Send GET request to quizapi.io to get a list of questions.
     const response = await axios.get(
-      `https://quizapi.io/api/v1/questions?apiKey=${token}&limit=${count}&category=Linux&difficulty=Easy`
+      `https://opentdb.com/api.php?amount=${count}&category=18&difficulty=easy&type=multiple`
     );
 
-    //* Loop over the data coming from the API response.
-    response.data.forEach(async (entry) => {
-      //* Clean the answers object (remove null values)
-      entry.answers = cleanAnswers(entry.answers);
+    //? Check if the response is successful
+    if (response.data.response_code === 0) {
+      //* Loop over the data coming from the API response.
+      response.data.results.forEach(async (entry) => {
+        //* Add the correct answer to the incorrect_answers array and shuffle it
+        const choices = prepareAnswers(
+          entry.incorrect_answers,
+          entry.correct_answer
+        );
 
-      //? Push the question in the list
-      questionsList.push({
-        //* The question text
-        question: entry.question,
-        //* All available answers
-        choices: entry.answers,
-        //* Correct answer value (ex: answer_a)
-        answer: entry.correct_answer,
-        //* Complete answer text
-        answerText: entry.answers[entry.correct_answer],
+        //? Push the question in the list
+        questionsList.push({
+          //* The question text
+          question: entry.question,
+          //* All available answers
+          choices,
+          //* Complete answer text
+          answerText: entry.correct_answer,
+        });
       });
-    });
+
+      console.log(questionsList);
+    } else {
+      throw new Error();
+    }
   } catch (error) {
     console.log(
       chalk.red(`Sorry ${playerName}, no questions available right now!`)
@@ -88,17 +100,15 @@ async function loadQuestions(count = 2) {
 }
 
 /**
- * Remove all null and undefined values from the given object
- * @param {Object} answers - All question's answers
- * @returns cleaned Answer's object
+ * @purpose - Concatenate all answers together and shuffle them.
+ * @param {array} incorrectAnswers - All question's incorrect answers
+ * @param {string} correctAnswer - Question's correct answer.
+ * @returns Array of all choices
  */
-function cleanAnswers(answers) {
-  //? Remove all null/undefined entries
-  let cleanedAnswers = Object.fromEntries(
-    Object.entries(answers).filter(([_, v]) => v != null)
-  );
-
-  return cleanedAnswers;
+function prepareAnswers(incorrectAnswers, correctAnswer) {
+  let choices = [...incorrectAnswers, correctAnswer];
+  choices = choices.sort((a, b) => 0.5 - Math.random());
+  return choices;
 }
 
 /**
@@ -111,7 +121,7 @@ async function play() {
     for (let counter = 0; counter < questionsList.length; counter++) {
       const entry = questionsList[counter];
 
-      console.log("Answer: ", chalk.green(entry.answerText));
+      console.log("Answer: ", chalk.red(entry.answerText));
 
       //* The id of the question (used to get player input later)
       let questionName = `question_${counter}`;
