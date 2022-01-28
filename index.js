@@ -14,7 +14,7 @@ import { createSpinner } from "nanospinner";
 const gameData = {
   //? Hold the player name
   playerName: "",
-  //? All available categories
+  //* All available categories
   categories: [
     {
       id: "9",
@@ -43,14 +43,31 @@ const gameData = {
   ],
   //? Hold question's category
   selectedCategoryId: "",
-  //? All available question's difficulties
+  //* All available question's difficulties
   difficulties: ["Easy", "Medium", "Hard"],
   //? Hold game difficulty selected by the player
   selectedDifficulty: "",
-  //? All available amount of questions
+  //* All available amount of questions
   amountOfQuestions: [3, 5, 7, 10],
   //? Hold question's amount
   selectedAmountOfQuestions: 3,
+  //* All available question's type
+  questionsTypes: [
+    {
+      type: "Multiple Choices",
+      apiParam: "multiple",
+    },
+    {
+      type: "True/False",
+      apiParam: "boolean",
+    },
+    {
+      type: "Both",
+      apiParam: "",
+    },
+  ],
+  //? Hold question's type selected by the player
+  selectedQuestionType: "",
   //? Hold all questions loaded
   questionsList: [],
 };
@@ -74,7 +91,7 @@ async function welcome() {
   ${chalk.bold.bgCyan.black("How To Play ?")}
   I am a process on your computer.
   If you get any question wrong I will be ${chalk.bgRed.black("killed")}
-  So get all the question right...
+  So get all the question ${chalk.bold.bgGreen.black("right")}...
   `);
 }
 
@@ -98,14 +115,11 @@ async function askName() {
  * @purpose - Ask the player to choose one of the available categories
  */
 async function chooseCategory() {
-  const availableCategories = gameData.categories.map(
-    (entry) => entry.category
-  );
   //? Prompt player with categories
   const playerAnswer = await promptPlayer(
     "category",
     "Choose a category?",
-    availableCategories
+    gameData.categories.map((entry) => entry.category)
   );
 
   //? Get the selected category id
@@ -147,12 +161,32 @@ async function chooseAmountOfQuestions() {
 }
 
 /**
+ * @purpose - Ask the player to choose question's type
+ */
+async function chooseQuestionsType() {
+  //? Prompt player with types
+  const playerAnswer = await promptPlayer(
+    "questionsType",
+    "Choose prefaced questions type?",
+    gameData.questionsTypes.map((entry) => entry.type)
+  );
+
+  //* Set API param name
+  gameData.questionsTypes.forEach((entry) => {
+    if (entry.type == playerAnswer) {
+      //? Set the selected type
+      gameData.selectedQuestionType = entry.apiParam;
+    }
+  });
+}
+
+/**
  * @purpose - Load questions from the third party API and save them in the questions list.
  */
 async function fetchQuestions() {
   try {
     //? Send GET request to opentdb.com to get a list of questions.
-    const url = `https://opentdb.com/api.php?amount=${gameData.selectedAmountOfQuestions}&category=${gameData.selectedCategoryId}&difficulty=${gameData.selectedDifficulty}&type=multiple`;
+    const url = `https://opentdb.com/api.php?amount=${gameData.selectedAmountOfQuestions}&category=${gameData.selectedCategoryId}&difficulty=${gameData.selectedDifficulty}&type=${gameData.selectedQuestionType}`;
     const response = await axios.get(url);
 
     //? Check if the response is successful
@@ -345,6 +379,7 @@ async function runGame() {
   await chooseCategory(); //? Ask for the category
   await chooseDifficulty(); //? Ask for the difficulty
   await chooseAmountOfQuestions(); //? Ask for the amount of questions
+  await chooseQuestionsType(); //? Ask for questions type
   await fetchQuestions(); //? Load questions from the API
 
   const win = await play(); //? Start the game
