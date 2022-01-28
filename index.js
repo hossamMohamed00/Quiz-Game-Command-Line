@@ -11,6 +11,9 @@ import chalkAnimation from "chalk-animation";
 import figlet from "figlet";
 import { createSpinner } from "nanospinner";
 
+/**
+ * ? The main object containing all the game data.
+ */
 const gameData = {
   //? Hold the player name
   playerName: "",
@@ -39,6 +42,10 @@ const gameData = {
     {
       id: "23",
       category: "History",
+    },
+    {
+      id: "",
+      category: "* Mix of all categories",
     },
   ],
   //? Hold question's category
@@ -107,6 +114,12 @@ async function askName() {
       return "Anonymous";
     },
   });
+
+  console.log(
+    chalk.magenta(
+      `Welcome ${chalk.bold.blue(answer.player_name)}, nice to have you.`
+    )
+  );
 
   gameData.playerName = answer.player_name;
 }
@@ -307,7 +320,7 @@ async function handleAnswer(playerAnswer, questionAnswer) {
   await sleep();
   if (playerAnswer == questionAnswer) {
     spinner.success({
-      text: chalk.bold.bgGreen.black(`Nice work ${gameData.playerName}.`),
+      text: chalk.bold.green(`Nice work ${gameData.playerName}.`),
     });
     //? Indicate that the player answer is correct. 👌🏻
     return true;
