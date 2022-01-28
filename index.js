@@ -71,9 +71,9 @@ async function welcome() {
   rainbowTitle.stop();
 
   console.log(`
-  ${chalk.bgBlue("How To Play")}
+  ${chalk.bold.bgCyan.black("How To Play ?")}
   I am a process on your computer.
-  If you get any question wrong I will be ${chalk.bgRed("killed")}
+  If you get any question wrong I will be ${chalk.bgRed.black("killed")}
   So get all the question right...
   `);
 }
@@ -272,12 +272,17 @@ async function handleAnswer(playerAnswer, questionAnswer) {
   const spinner = createSpinner("Checking answer...").start();
   await sleep();
   if (playerAnswer == questionAnswer) {
-    spinner.success({ text: `Nice work ${gameData.playerName}.` });
+    spinner.success({
+      text: chalk.bold.bgGreen.black(`Nice work ${gameData.playerName}.`),
+    });
     //? Indicate that the player answer is correct. 👌🏻
     return true;
   } else {
-    spinner.error({ text: `Game Over, you lose ${gameData.playerName}!` });
-    //? Indicate that the player answer is Incorrect. ❌❌
+    spinner.error({
+      text: chalk.bold.bgRed(`Game Over, you lose ${gameData.playerName}!`),
+    });
+    await sleep(2000);
+    //? Indicate that the player answer is Incorrect. ❌
     return false;
   }
 }
