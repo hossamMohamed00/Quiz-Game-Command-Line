@@ -8,6 +8,7 @@
   - Questions count.
   - Questions type (True/False Or Multiple Choice).
 
+- I have deployed the package in npm [command-line-quiz-game](https://www.npmjs.com/package/command-line-quiz-game)
 ## Getting Started
 
 ### Dependencies
