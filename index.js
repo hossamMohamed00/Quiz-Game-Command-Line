@@ -260,8 +260,6 @@ async function play() {
     for (let counter = 0; counter < gameData.questionsList.length; counter++) {
       const entry = gameData.questionsList[counter];
 
-      console.log("Answer: ", chalk.red(entry.answerText));
-
       //* The id of the question (used to get player input later)
       let questionName = `question_${counter}`;
 
@@ -326,7 +324,9 @@ async function handleAnswer(playerAnswer, questionAnswer) {
     return true;
   } else {
     spinner.error({
-      text: chalk.bold.bgRed(`Game Over, you lose ${gameData.playerName}!`),
+      text: chalk.bold.red(
+        `Incorrect answer, you lose ${gameData.playerName}!`
+      ),
     });
     await sleep(2000);
     //? Indicate that the player answer is Incorrect. ❌
