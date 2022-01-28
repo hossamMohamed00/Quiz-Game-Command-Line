@@ -293,17 +293,21 @@ async function handleAnswer(playerAnswer, questionAnswer) {
 function winner() {
   console.clear();
   const msg =
-    `Congrats, ${gameData.playerName} !\n $ 1, 0 0 0 , 0 0 0 for you`.toUpperCase();
+    `Well Done, ${gameData.playerName} !\n $ 1, 0 0 0 , 0 0 0 for you`.toUpperCase();
 
-  figlet(msg, (err, data) => {
+  figlet(msg, async (err, data) => {
     if (!err) {
       console.log(gradient.pastel.multiline(data));
 
-      console.log(
-        chalk.blueBright(
-          "\n\nProgramming isn't about what you know; it's about making the command line look cool!"
-        )
+      console.log(`
+      
+      `);
+      const wisdom = chalkAnimation.neon(
+        "Programming isn't about what you know; it's about making the command line look cool!"
       );
+
+      await sleep(3000);
+      wisdom.stop();
     }
   });
 }
@@ -315,9 +319,19 @@ function loser() {
   console.clear();
   const msg = `oops, ${gameData.playerName} !\n you are loser`.toUpperCase();
 
-  figlet(msg, (err, data) => {
+  figlet(msg, async (err, data) => {
     if (!err) {
       console.log(gradient.pastel.multiline(data));
+
+      console.log(`
+      
+      `);
+      const wisdom = chalkAnimation.rainbow(
+        "Go and come with some information, loser."
+      );
+
+      await sleep(3000);
+      wisdom.stop();
     }
   });
 }
