@@ -43,8 +43,10 @@ const gameData = {
   ],
   //? Hold question's category
   selectedCategoryId: "",
-  //? Hold game level
-  selectedLevel: "Easy",
+  //? All available question's difficulties
+  difficulties: ["Easy", "Medium", "Hard"],
+  //? Hold game difficulty selected by the player
+  selectedDifficulty: "",
   //? Hold question's amount
   amountOfQuestions: 5,
   //? Hold all questions loaded
@@ -74,6 +76,9 @@ async function welcome() {
   `);
 }
 
+/**
+ * @purpose - Prompt the player to enter his/her name
+ */
 async function askName() {
   const answer = await inquirer.prompt({
     name: "player_name",
@@ -87,6 +92,9 @@ async function askName() {
   gameData.playerName = answer.player_name;
 }
 
+/**
+ * @purpose - Ask the player to choose one of the available categories
+ */
 async function chooseCategory() {
   const availableCategories = gameData.categories.map(
     (entry) => entry.category
@@ -107,13 +115,28 @@ async function chooseCategory() {
 }
 
 /**
+ * @purpose - Ask the player to choose question's difficulty
+ */
+async function chooseDifficulty() {
+  //? Prompt player with difficulties
+  const playerAnswer = await promptPlayer(
+    "difficulty",
+    "Choose a questions difficulty?",
+    gameData.difficulties
+  );
+
+  //? Set the selected difficulty
+  gameData.selectedDifficulty = playerAnswer.toLowerCase();
+}
+
+/**
  * @purpose - Load questions from the third party API and save them in the questions list.
  */
 async function loadQuestions() {
   try {
     //? Send GET request to opentdb.com to get a list of questions.
     const response = await axios.get(
-      `https://opentdb.com/api.php?amount=${gameData.amountOfQuestions}&category=${gameData.selectedCategoryId}&difficulty=easy&type=multiple`
+      `https://opentdb.com/api.php?amount=${gameData.amountOfQuestions}&category=${gameData.selectedCategoryId}&difficulty=${gameData.selectedDifficulty}&type=multiple`
     );
 
     //? Check if the response is successful
@@ -284,7 +307,8 @@ function loser() {
 async function runGame() {
   await welcome(); //? Greeting message
   await askName(); //? Ask for the player name
-  await chooseCategory();
+  await chooseCategory(); //? Ask for the category
+  await chooseDifficulty(); //? Ask for the difficulty
   await loadQuestions(); //? Load questions from the API
 
   const win = await play(); //? Start the game
