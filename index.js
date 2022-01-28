@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
 ?Shebang or Hashbang (#!) is the first line of the file
  which tells the OS which interpreter to use.
@@ -324,7 +325,7 @@ async function handleAnswer(playerAnswer, questionAnswer) {
   } else {
     spinner.error({
       text: chalk.bold.red(
-        `Incorrect answer, you lose ${gameData.playerName}!`
+        `Incorrect answer, you lose ${gameData.playerName}! ✖ 💀💀💀 `
       ),
     });
     await sleep(2000);
