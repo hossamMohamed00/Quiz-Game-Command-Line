@@ -1,6 +1,6 @@
 {
   "name": "command-line-quiz-game",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Funny quiz game run in command line, get all questions from third party API.",
   "main": "index.js",
   "type": "module",
