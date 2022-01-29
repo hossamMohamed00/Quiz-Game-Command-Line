@@ -1,41 +1,37 @@
-# Quiz-Game-Command-Line
+# Command Line Quiz Game 
+## _Funny and simple Q/A Game 👩🏻‍💻🎮_
 
-## Description
+Running on the command line ask you some questions such as
+* Questions Difficulty (Esay, Medium, Hard). 👀
+* How many questions do you want to take?. 🤔
+* Questions type (True/False Or Multiple Choice). 🧐
 
-- Funny quiz game run in command line.
-- The player has the ability to choose:
-  - Questions difficulty.
-  - Questions count.
-  - Questions type (True/False Or Multiple Choice).
+## Main aim of this project
 
-- I have deployed the package in npm [command-line-quiz-game](https://www.npmjs.com/package/command-line-quiz-game)
-## Getting Started
+> Programming isn't about what you know; it's about making the command line look cool!
 
-### Dependencies
+## Dependencies 🏬
 
-- Nodejs
-- axios
-- chalk
-- chalk-animation
-- inquirer
-- figlet
-- nanospinner
-- gradient-string
+This qiuz game uses a number of packages to work properly:
+- [node.js]
+- [axios](https://www.npmjs.com/package/axios) 
+- [chalk](https://www.npmjs.com/package/chalk)
+- [chalk-animation](https://www.npmjs.com/package/chalk-animation)
+- [inquirer](https://www.npmjs.com/package/inquirer)
+- [figlet](https://www.npmjs.com/package/inquirer)
+- ...
 
-### Installing
+## Installation 👨🏻‍🏫
 
-```bash
-# Install all dependencies
-npm install
-```
+It requires [Node.js](https://nodejs.org/) v10+ to run.
 
-### Executing program
+Install the dependencies and start the app.
 
-- First clone the project.
-- Then, install all dependencies
-- Finally, run the following command
-
-```bash
-# Run the app
+```sh
+npm i
 npm start
 ```
+
+## License 
+
+MIT
