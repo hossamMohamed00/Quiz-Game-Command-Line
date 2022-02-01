@@ -2,7 +2,7 @@
 ## _Funny and simple Q/A Game 👩🏻‍💻🎮_
 
 Running on the command line ask you some questions such as
-* Questions Difficulty (Esay, Medium, Hard). 👀
+* Questions Difficulty (Easy, Medium, Hard). 👀
 * How many questions do you want to take?. 🤔
 * Questions type (True/False Or Multiple Choice). 🧐
 
@@ -31,7 +31,7 @@ Running on the command line ask you some questions such as
 
 ## Dependencies 🏬
 
-This qiuz game uses a number of packages to work properly:
+This quiz game uses a number of packages to work properly:
 - [node.js]
 - [axios](https://www.npmjs.com/package/axios) 
 - [chalk](https://www.npmjs.com/package/chalk)
